@@ -33,15 +33,18 @@ export const authorizeRouter: FastifyPluginAsync<{ prefix: string }> =
           if (player) {
             const savedPassword = player.password;
             const isAuthorized = await compare(password, savedPassword);
-            if (isAuthorized) logIn(player, request, reply);
+            if (isAuthorized) {
+              await logIn(player, request, reply);
+              return
+            }
           }
-
           return reply.send({
             data: {
-              status: "SUCCESS",
-              player,
-            },
-          });
+              status: "AUTHORIZATION FAILED",
+              player
+            }
+          })
+
         } catch (error) {
           console.error(error);
           reply.code(500);

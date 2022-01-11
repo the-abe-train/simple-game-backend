@@ -41,7 +41,7 @@ export const registerRouter: FastifyPluginAsync<{ prefix: string }> =
           await player.save();
 
           // Log-in right after registration
-          if (player) logIn(player, request, reply);
+          if (player) await logIn(player, request, reply);
 
           return reply.send({
             data: {

@@ -3,7 +3,6 @@ import {
   FastifyPluginAsync,
   FastifyReply,
   FastifyRequest,
-  FastifySchema,
 } from "fastify";
 import { jwtSignature } from "../env";
 import jwt from "jsonwebtoken";
@@ -70,27 +69,22 @@ async function getUserFromCookies(
   }
 }
 
-
-
 export const testRouter: FastifyPluginAsync<{ prefix: string }> =
   async function router(server: FastifyInstance) {
-    server.get(
-      "/test",
-      async (request, reply) => {
-        try {
-          const user = await getUserFromCookies(request, reply);
+    server.get("/test", async (request, reply) => {
+      try {
+        const user = await getUserFromCookies(request, reply);
 
-          // return user email if it exists, otherwise return unquthorized
-          if (user?.id) {
-            reply.send({ data: user });
-          } else {
-            reply.send({ data: "user lookup failed" });
-          }
-        } catch (error) {
-          console.error(error);
+        // return user email if it exists, otherwise return unquthorized
+        if (user?.id) {
+          reply.send({ data: user });
+        } else {
+          reply.send({ data: "user lookup failed" });
         }
-
-        reply.send({ data: "hello world" });
+      } catch (error) {
+        console.error(error);
       }
-    );
+
+      reply.send({ data: "hello world" });
+    });
   };

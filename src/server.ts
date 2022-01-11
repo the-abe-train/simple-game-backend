@@ -2,6 +2,7 @@ import fastify, { FastifyInstance } from "fastify";
 import fastifyCookie from "fastify-cookie";
 import fastifyStatic from "fastify-static";
 import path from "path";
+
 import { createConnection } from "typeorm";
 import { Player } from "./entities/Player";
 import { Score } from "./entities/Score";
