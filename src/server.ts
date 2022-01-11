@@ -1,73 +1,58 @@
-import Fastify, { FastifyInstance } from "fastify";
+import fastify, { FastifyInstance } from "fastify";
+import fastifyCookie from "fastify-cookie";
 import fastifyStatic from "fastify-static";
 import path from "path";
-import { registerUser } from "./accounts/register";
-import { port } from "./env";
+import { createConnection } from "typeorm";
+import { Player } from "./entities/Player";
+import { Score } from "./entities/Score";
+import { Session } from "./entities/Session";
 
-const server: FastifyInstance = Fastify({});
+import { cookieSignature, dbUrl, port } from "./env";
+import { authorizeRouter } from "./routes/authorize";
+import { registerRouter } from "./routes/register";
+import { testRouter } from "./routes/test";
 
+// Declare server
+const server: FastifyInstance = fastify({});
+
+// Middleware
 server.register(fastifyStatic, {
   root: path.join(__dirname, "public"),
-  prefix: "/public/", // optional: default '/'
+  prefix: "/public/",
 });
+server.register(fastifyCookie, { secret: cookieSignature });
 
+// Routes
 server.get("/", async (request, reply) => {
   return reply.sendFile("index.html");
 });
-
-server.post<{ Body: Record<"name" | "password", string> }>(
-  "/api/register",
-  async (request, reply) => {
-    try {
-      console.log(request.body.name);
-      console.log(request.body.password);
-
-      const userId = await registerUser(
-        request.body.name,
-        request.body.password
-      );
-
-      return reply.send(userId);
-
-      // if (userId) {
-      //   await logUserIn(userId, request, reply);
-      // }
-      // reply.send({
-      //   data: {
-      //     status: "SUCCESS",
-      //     userId,
-      //   },
-      // });
-    } catch (error) {
-      console.error(error);
-      return reply.send({
-        data: {
-          status: "FAILED",
-        },
-      });
-    }
-  }
-);
-
+server.register(registerRouter, { prefix: "/api" });
+server.register(authorizeRouter, { prefix: "/api" });
+server.register(testRouter);
 server.post("/api/logout", async (request, reply) => {
   return { msg: "endpoint hit!" };
 });
 
-server.post("/api/authorize", async (request, reply) => {
-  return { msg: "endpoint hit!" };
-});
+// Database
+async function connectDb(): Promise<void> {
+  await createConnection({
+    type: "postgres",
+    entities: [Player, Score, Session],
+    synchronize: true,
+    url: dbUrl,
+    ssl: { rejectUnauthorized: false },
+  });
+  return console.log("Connected to database!");
+}
 
-const start = async () => {
+(async () => {
   try {
+    await connectDb();
     await server.listen(port);
     console.log(`Server listening on port ${port}`);
-
-    // const address = server.server.address();
-    // const port = typeof address === "string" ? address : address?.port;
   } catch (err) {
     server.log.error(err);
     console.error(err);
     process.exitCode = 1;
   }
-};
-start();
+})();

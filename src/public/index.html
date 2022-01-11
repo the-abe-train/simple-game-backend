@@ -12,7 +12,7 @@
   <h2>Hello</h2>
   <h3>Register Form</h3>
   <form id="register-form" action="">
-    <input type="email" name="email" value="candle@penis.com" />
+    <input type="text" name="username" value="candles" />
     <input type="password" name="password" value="Password1!" />
     <button type="submit">Register</button>
   </form>
@@ -21,7 +21,7 @@
   <br>
   <h3>Log-in form</h3>
   <form id="login-form" action="">
-    <input type="email" name="email" value="candle@penis.com" />
+    <input type="text" name="username" value="candles" />
     <input type="password" name="password" value="Password1!" />
     <button type="submit">Log-in</button>
   </form>
@@ -59,7 +59,7 @@
             body: JSON.stringify(values),
             headers: { "Content-type": "application/json; charset=UTF-8" },
           });
-          console.log("values", values);
+          // console.log("values", values);
         } catch (error) {
           console.error(error);
         }
@@ -80,7 +80,7 @@
             body: JSON.stringify(values),
             headers: { "Content-type": "application/json; charset=UTF-8" },
           });
-          console.log("values", values);
+          // console.log("values", values);
         } catch (error) {
           console.error(error);
         }
