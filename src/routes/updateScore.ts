@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyPluginAsync, FastifySchema } from "fastify";
 import { Player } from "../entities/Player";
-import { affirmSession } from "../authentication/session";
+import { affirmSession } from "../authorization/session";
 
 interface IBody {
   score: number;

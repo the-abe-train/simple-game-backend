@@ -8,7 +8,7 @@ import { jwtSignature } from "../env";
 import jwt from "jsonwebtoken";
 import { Player } from "../entities/Player";
 import { Session } from "../entities/Session";
-import { refreshTokens } from "../authentication/tokens";
+import { refreshTokens } from "../authorization/tokens";
 
 async function getUserFromCookies(
   request: FastifyRequest,

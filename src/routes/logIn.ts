@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyPluginAsync, FastifySchema } from "fastify";
 import { Player } from "../entities/Player";
 import { compare } from "bcryptjs";
-import { logIn } from "../authentication/logIn";
+import { authenticate } from "../authorization/authentication";
 
 // 2 types of type checking required: Typescript and schema
 interface IBody {
@@ -34,7 +34,7 @@ export const authorizeRouter: FastifyPluginAsync<{ prefix: string }> =
             const savedPassword = player.password;
             const isAuthorized = await compare(password, savedPassword);
             if (isAuthorized) {
-              await logIn(player, request, reply);
+              await authenticate(player, request, reply);
               reply.send({
                   message: "Authorization succeeded",
                   playerId: player.id,

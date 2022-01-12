@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyPluginAsync, FastifySchema } from "fastify";
 import { Player } from "../entities/Player";
 import bcrypt from "bcryptjs";
-import { logIn } from "../authentication/logIn";
+import { authenticate } from "../authorization/authentication";
 const { genSalt, hash } = bcrypt;
 
 // 2 types of type checking required: Typescript and schema
@@ -41,7 +41,7 @@ export const registerRouter: FastifyPluginAsync<{ prefix: string }> =
           await player.save();
 
           // Log-in right after registration
-          if (player) await logIn(player, request, reply);
+          if (player) await authenticate(player, request, reply);
 
           reply.send({
             message: "Player registered",

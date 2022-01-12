@@ -8,7 +8,7 @@ import { Player } from "./entities/Player";
 import { Session } from "./entities/Session";
 
 import { cookieSignature, dbUrl, port } from "./env";
-import { authorizeRouter } from "./routes/authorize";
+import { authorizeRouter } from "./routes/logIn";
 import { logOutRouter } from "./routes/logOut";
 import { registerRouter } from "./routes/register";
 import { testRouter } from "./routes/test";
