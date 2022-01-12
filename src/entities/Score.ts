@@ -2,7 +2,6 @@ import {
   BaseEntity,
   Column,
   Entity,
-  OneToOne,
   PrimaryColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -11,7 +10,7 @@ import {
 export class Score extends BaseEntity {
   @PrimaryColumn()
   username: string;
-  
+
   @Column()
   score: number;
 

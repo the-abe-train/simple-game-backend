@@ -18,7 +18,6 @@
   </form>
   <br>
   <hr>
-  <br>
   <h3>Log-in form</h3>
   <form id="login-form" action="">
     <input type="text" name="username" value="candles" />
@@ -27,66 +26,20 @@
   </form>
   <br>
   <hr>
+  <form id="score-form" action="">
+    <label for="score">Enter score:</label>
+    <input id="score" type="number" name="score" value="Password1!" />
+    <button type="submit">Enter</button>
+  </form>
+  <br>
+  <hr>
   <br>
   <a href="/test">Test</a>
   <br>
   <hr>
   <br>
-  <button onclick="logout()">Log-out</button>
-  <script>
-    async function logout() {
-      try {
-        const res = await fetch("/api/logout", {
-            method: "POST",
-          });
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    (() => {
-      const registerForm = document.getElementById("register-form");
-      registerForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        try {
-          const values = Object.values(registerForm).reduce((obj, field) => {
-            if (field.name) {
-              obj[field.name] = field.value;
-            }
-            return obj;
-          }, {});
-          const res = await fetch("/api/register", {
-            method: "POST",
-            body: JSON.stringify(values),
-            headers: { "Content-type": "application/json; charset=UTF-8" },
-          });
-          // console.log("values", values);
-        } catch (error) {
-          console.error(error);
-        }
-      });
-
-      const loginForm = document.getElementById("login-form");
-      loginForm.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        try {
-          const values = Object.values(loginForm).reduce((obj, field) => {
-            if (field.name) {
-              obj[field.name] = field.value;
-            }
-            return obj;
-          }, {});
-          const res = await fetch("/api/authorize", {
-            method: "POST",
-            body: JSON.stringify(values),
-            headers: { "Content-type": "application/json; charset=UTF-8" },
-          });
-          // console.log("values", values);
-        } catch (error) {
-          console.error(error);
-        }
-      });
-    })();
-  </script>
+  <button id="logout-btn">Log-out</button>
+  <script src="../public/script.js"></script>
 </body>
 
 </html>

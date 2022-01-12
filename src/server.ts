@@ -10,8 +10,10 @@ import { Session } from "./entities/Session";
 
 import { cookieSignature, dbUrl, port } from "./env";
 import { authorizeRouter } from "./routes/authorize";
+import { logOutRouter } from "./routes/logOut";
 import { registerRouter } from "./routes/register";
 import { testRouter } from "./routes/test";
+import { scoreUpdateRouter } from "./routes/updateScore";
 
 // Declare server
 const server: FastifyInstance = fastify({});
@@ -29,10 +31,10 @@ server.get("/", async (request, reply) => {
 });
 server.register(registerRouter, { prefix: "/api" });
 server.register(authorizeRouter, { prefix: "/api" });
+server.register(logOutRouter, { prefix: "/api" });
+server.register(scoreUpdateRouter, { prefix: "/api" });
 server.register(testRouter);
-server.post("/api/logout", async (request, reply) => {
-  return { msg: "endpoint hit!" };
-});
+
 
 // Database
 async function connectDb(): Promise<void> {

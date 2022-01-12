@@ -43,18 +43,16 @@ export const registerRouter: FastifyPluginAsync<{ prefix: string }> =
           // Log-in right after registration
           if (player) await logIn(player, request, reply);
 
-          return reply.send({
-            data: {
-              status: "SUCCESS",
-              user: player,
-            },
+          reply.send({
+            message: "Player registered",
+            playerId: player.id,
           });
-        } catch (error) {
-          console.error(error);
+        } catch (e) {
+          console.error(e);
           reply.code(500);
-          return reply.send({
+          reply.send({
             status: "Database error",
-            error,
+            error: e,
           });
         }
       }
