@@ -1,7 +1,6 @@
 import { FastifyInstance, FastifyPluginAsync, FastifySchema } from "fastify";
 import { Player } from "../entities/Player";
 import { affirmSession } from "../authentication/session";
-import { Score } from "../entities/Score";
 
 interface IBody {
   score: number;
@@ -24,19 +23,9 @@ export const scoreUpdateRouter: FastifyPluginAsync<{ prefix: string }> = async (
     { schema },
     async (request, reply) => {
       try {
-        const playerId = await affirmSession(request, reply);
-
-        const player = await Player.findOne(playerId);
         const newScore = request.body.score;
-
-        if (player) {
-          const score = Score.create({
-            username: player.username,
-            score: newScore,
-          });
-          score.save();
-        }
-
+        const playerId = await affirmSession(request, reply);
+        await Player.update(playerId, { high_score: newScore });
         reply.send({
           message: "Score updated",
           playerId,
@@ -46,7 +35,7 @@ export const scoreUpdateRouter: FastifyPluginAsync<{ prefix: string }> = async (
         reply.code(500);
         reply.send({
           message: "Database error",
-          error: e
+          error: e,
         });
         console.error(e);
       }

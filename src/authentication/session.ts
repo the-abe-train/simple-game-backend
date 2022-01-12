@@ -39,6 +39,7 @@ export const affirmSession = async (
   request: FastifyRequest,
   reply: FastifyReply
 ): Promise<string> => {
+  
   // Scenario 1: Access token exists
   if (request?.cookies?.accessToken) {
     const { accessToken } = request.cookies;

@@ -5,7 +5,6 @@ import path from "path";
 
 import { createConnection } from "typeorm";
 import { Player } from "./entities/Player";
-import { Score } from "./entities/Score";
 import { Session } from "./entities/Session";
 
 import { cookieSignature, dbUrl, port } from "./env";
@@ -40,7 +39,7 @@ server.register(testRouter);
 async function connectDb(): Promise<void> {
   await createConnection({
     type: "postgres",
-    entities: [Player, Score, Session],
+    entities: [Player, Session],
     synchronize: true,
     url: dbUrl,
     ssl: { rejectUnauthorized: false },

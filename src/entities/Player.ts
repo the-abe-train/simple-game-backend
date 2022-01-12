@@ -7,8 +7,8 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
-import { Score } from "./Score";
 import { Session } from "./Session";
 
 @Entity("player")
@@ -22,13 +22,15 @@ export class Player extends BaseEntity {
   @Column()
   password: string;
 
+  @Column({ default: 0 })
+  high_score: number;
+
   @CreateDateColumn()
   created_at: Date;
 
-  @OneToOne(() => Score)
-  @JoinColumn({name: "score_id"})
-  score: Score
+  @UpdateDateColumn()
+  score_updated_at: Date;
 
-  @OneToMany(() => Session, session => session.player)
-  sessions: Session[]
+  @OneToMany(() => Session, (session) => session.player)
+  sessions: Session[];
 }
