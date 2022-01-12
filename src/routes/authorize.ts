@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyPluginAsync, FastifySchema } from "fastify";
 import { Player } from "../entities/Player";
-import bcrypt, { compare } from "bcryptjs";
+import { compare } from "bcryptjs";
 import { logIn } from "../authentication/logIn";
 
 // 2 types of type checking required: Typescript and schema
@@ -35,16 +35,20 @@ export const authorizeRouter: FastifyPluginAsync<{ prefix: string }> =
             const isAuthorized = await compare(password, savedPassword);
             if (isAuthorized) {
               await logIn(player, request, reply);
-              return
+              return reply.send({
+                data: {
+                  status: "AUTHORIZATION SUCCESSFUL",
+                  player
+                },
+              });
             }
           }
           return reply.send({
             data: {
               status: "AUTHORIZATION FAILED",
-              player
-            }
-          })
-
+              player,
+            },
+          });
         } catch (error) {
           console.error(error);
           reply.code(500);

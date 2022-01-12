@@ -15,50 +15,33 @@ async function getUserFromCookies(
   reply: FastifyReply
 ) {
   try {
-    if (!jwtSignature) throw "No jwt signature in environment variables";
 
-    // check that access token exists
+    // Scenario 1: Access token exists
     if (request?.cookies?.accessToken) {
-      // Get the access and refresh tokens
       const { accessToken } = request.cookies;
-
-      // If there is an access token, decode the access token
-      const decodedAccessToken = jwt.verify(accessToken, jwtSignature);
-      console.log(decodedAccessToken);
-
-      if (typeof decodedAccessToken === "string") {
-        throw "decoded access token wrong type";
-      }
-
-      // Return user form record
-      return Player.findOne({ id: decodedAccessToken.playerId });
+      const decodedToken = jwt.verify(accessToken, jwtSignature);
+      if (typeof decodedToken === "string") throw "error"  // Type narrowing
+      return Player.findOne({ id: decodedToken.playerId });
     }
+
+    // Scenario 2: If there is no access token, use the refresh token
     if (request?.cookies?.refreshToken) {
-      // If there is no access token, decode the refresh token,
       const { refreshToken } = request.cookies;
-      const decodedRefreshToken = jwt.verify(refreshToken, jwtSignature);
-
-      if (typeof decodedRefreshToken === "string") {
-        throw "decoded access token wrong type";
-      }
-
-      const { sessionToken } = decodedRefreshToken;
-
-      // lookup session
-
+      const decodedToken = jwt.verify(refreshToken, jwtSignature);
+      if (typeof decodedToken === "string") throw "error"  // Type narrowing
+      const { sessionToken } = decodedToken;
       const currentSession = await Session.findOne({
         session_token: sessionToken,
       });
 
-      // If session is valid, look up current user,
+      // If session is valid, look up current user
       if (currentSession?.valid) {
         const currentUser = await Player.findOne({
           id: currentSession.player.id,
         });
-        if (currentUser) {
-          console.log("current user", currentUser);
 
-          // refresh tokens, return current user
+        // Refresh tokens, return current user
+        if (currentUser) {
           await refreshTokens(sessionToken, currentUser.id, reply);
           return currentUser;
         }

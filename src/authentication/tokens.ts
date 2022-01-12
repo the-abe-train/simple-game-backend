@@ -2,7 +2,7 @@ import { FastifyReply } from "fastify";
 import jwt from "jsonwebtoken";
 import { jwtSignature } from "../env";
 
-async function createTokens(sessionToken: string, playerId: string) {
+const createTokens = (sessionToken: string, playerId: string) => {
   try {
     if (!jwtSignature) throw "No jwt signature in environment variables";
 
@@ -17,16 +17,16 @@ async function createTokens(sessionToken: string, playerId: string) {
   } catch (error) {
     return console.error(error);
   }
-}
+};
 
-export async function refreshTokens(
+export const refreshTokens = async (
   sessionToken: string,
   playerId: string,
   reply: FastifyReply
-) {
+): Promise<void> => {
   try {
     // Create JWT
-    const tokens = await createTokens(sessionToken, playerId);
+    const tokens = createTokens(sessionToken, playerId);
 
     if (tokens) {
       const { accessToken, refreshToken } = tokens;
@@ -35,34 +35,26 @@ export async function refreshTokens(
       const now = new Date();
       const refreshExpires = new Date(now.setDate(now.getDate() + 30));
 
-      console.log(tokens);
-
       reply
         .setCookie("refreshToken", refreshToken, {
           path: "/",
           domain: "localhost",
-          httpOnly: true,
+          // httpOnly: true,
           expires: refreshExpires,
           // secure
         })
         .setCookie("accessToken", accessToken, {
           path: "/",
           domain: "localhost",
-          httpOnly: true,
+          // httpOnly: true,
           // expires
           // secure
-        })
-        .send({
-          data: {
-            status: "AUTHORIZATION SUCCESSFUL",
-          },
         });
+        return
     } else {
       throw "tokens not found";
     }
   } catch (e) {
-    // console.error(e);
-    // return reply;
-    throw e;
+    console.error(e);
   }
-}
+};

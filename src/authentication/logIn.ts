@@ -3,11 +3,11 @@ import { Player } from "../entities/Player";
 import { createSession } from "./session";
 import { refreshTokens } from "./tokens";
 
-export async function logIn(
+export const logIn = async (
   player: Player,
   request: FastifyRequest,
   reply: FastifyReply
-) {
+): Promise<void>  => {
   try {
     const header = request.headers["user-agent"];
 
@@ -24,8 +24,8 @@ export async function logIn(
     // Refresh tokens
     await refreshTokens(sessionToken, player.id, reply);
 
-    return reply;
+    return;
   } catch (e) {
     throw e;
   }
-}
+};

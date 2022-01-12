@@ -7,7 +7,7 @@ interface Connection {
   userAgent: string;
 }
 
-export async function createSession(player: Player, connection: Connection) {
+  export const createSession =  async (player: Player, connection: Connection)  => {
   try {
     // generate a session token
     const sessionToken = randomBytes(43).toString("hex");
