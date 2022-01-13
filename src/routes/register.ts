@@ -2,6 +2,8 @@ import { FastifyInstance, FastifyPluginAsync, FastifySchema } from "fastify";
 import { Player } from "../entities/Player";
 import bcrypt from "bcryptjs";
 import { authenticate } from "../authorization/authentication";
+import { getConnection } from "typeorm";
+import { nodeEnv } from "../env";
 const { genSalt, hash } = bcrypt;
 
 // 2 types of type checking required: Typescript and schema
@@ -33,6 +35,10 @@ export const registerRouter: FastifyPluginAsync<{ prefix: string }> =
           const salt = await genSalt(10);
           const hashedPassword = await hash(password, salt);
 
+          // Find connection
+          const connection = getConnection(nodeEnv);
+          Player.useConnection(connection);
+
           // Create user
           const player = Player.create({
             username,
@@ -48,6 +54,10 @@ export const registerRouter: FastifyPluginAsync<{ prefix: string }> =
             playerId: player.id,
           });
         } catch (e) {
+
+          // TODO throw unique error if player already exists
+          // if (e?.)
+
           console.error(e);
           reply.code(500);
           reply.send({

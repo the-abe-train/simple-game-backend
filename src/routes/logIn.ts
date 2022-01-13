@@ -2,6 +2,8 @@ import { FastifyInstance, FastifyPluginAsync, FastifySchema } from "fastify";
 import { Player } from "../entities/Player";
 import { compare } from "bcryptjs";
 import { authenticate } from "../authorization/authentication";
+import { getConnection } from "typeorm";
+import { nodeEnv } from "../env";
 
 // 2 types of type checking required: Typescript and schema
 interface IBody {
@@ -26,9 +28,12 @@ export const authorizeRouter: FastifyPluginAsync<{ prefix: string }> =
       { schema },
       async (request, reply) => {
         try {
-          const { username, password } = request.body;
+          // Find connection
+          const connection = getConnection(nodeEnv);
+          Player.useConnection(connection);
 
           // Authorize user
+          const { username, password } = request.body;
           const player = await Player.findOne({ username });
           if (player) {
             const savedPassword = player.password;
@@ -36,17 +41,13 @@ export const authorizeRouter: FastifyPluginAsync<{ prefix: string }> =
             if (isAuthorized) {
               await authenticate(player, request, reply);
               reply.send({
-                  message: "Authorization succeeded",
-                  playerId: player.id,
+                message: "Player logged in",
+                playerId: player.id,
               });
             }
+          } else {
+            throw "Player not found";
           }
-          reply.send({
-            data: {
-              status: "AUTHORIZATION FAILED",
-              player,
-            },
-          });
         } catch (e) {
           reply.code(500);
           reply.send({

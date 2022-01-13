@@ -1,6 +1,8 @@
 import { FastifyInstance, FastifyPluginAsync, FastifySchema } from "fastify";
 import { Player } from "../entities/Player";
 import { affirmSession } from "../authorization/session";
+import { getConnection } from "typeorm";
+import { nodeEnv } from "../env";
 
 interface IBody {
   score: number;
@@ -23,11 +25,16 @@ export const scoreUpdateRouter: FastifyPluginAsync<{ prefix: string }> = async (
     { schema },
     async (request, reply) => {
       try {
+        // Find connection
+        const connection = getConnection(nodeEnv);
+        Player.useConnection(connection);
+
+        // Update score
         const newScore = request.body.score;
         const playerId = await affirmSession(request, reply);
         await Player.update(playerId, { high_score: newScore });
         reply.send({
-          message: "Score updated",
+          message: "Player's high score updated",
           playerId,
           score: newScore,
         });

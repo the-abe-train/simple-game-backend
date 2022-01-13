@@ -8,7 +8,7 @@ export const logOutRouter: FastifyPluginAsync<{ prefix: string }> = async (
     try {
       await deauthenticate(request, reply);
       reply.send({
-        message: "User logged out",
+        message: "Player logged out",
       });
     } catch (e) {
       reply.code(500);

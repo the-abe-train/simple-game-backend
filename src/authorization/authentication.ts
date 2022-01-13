@@ -3,8 +3,9 @@ import { Player } from "../entities/Player";
 import { createSession } from "./session";
 import { refreshTokens } from "./tokens";
 import jwt from "jsonwebtoken";
-import { jwtSignature } from "../env";
+import { jwtSignature, nodeEnv } from "../env";
 import { Session } from "../entities/Session";
+import { getConnection } from "typeorm";
 
 export const authenticate = async (
   player: Player,
@@ -38,20 +39,20 @@ export const deauthenticate = async (
   reply: FastifyReply
 ) => {
   try {
-    // get refresh token
-    // decode session token from refresh token
     if (request?.cookies?.refreshToken) {
-      // If there is no access token, decode the refresh token,
+      // Get and decode refresh token
       const { refreshToken } = request.cookies;
       const decodedToken = jwt.verify(refreshToken, jwtSignature);
-
       if (typeof decodedToken === "string") {
         throw "decoded access token wrong type";
       }
-
       const { sessionToken } = decodedToken;
 
-      // delete database record for session
+      // Find connection
+      const connection = getConnection(nodeEnv);
+      Session.useConnection(connection);
+      
+      // Delete database record for session
       await Session.delete({ session_token: sessionToken });
     }
 
