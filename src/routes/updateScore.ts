@@ -21,7 +21,7 @@ export const scoreUpdateRouter: FastifyPluginAsync<{ prefix: string }> = async (
   server: FastifyInstance
 ) => {
   server.put<{ Body: IBody }>(
-    "/score/update",
+    "/player/score",
     { schema },
     async (request, reply) => {
       try {

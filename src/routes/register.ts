@@ -25,7 +25,7 @@ const schema: FastifySchema = {
 export const registerRouter: FastifyPluginAsync<{ prefix: string }> =
   async function router(server: FastifyInstance) {
     server.post<{ Body: IBody }>(
-      "/register",
+      "/player",
       { schema },
       async (request, reply) => {
         try {
@@ -49,21 +49,29 @@ export const registerRouter: FastifyPluginAsync<{ prefix: string }> =
           // Log-in right after registration
           if (player) await authenticate(player, request, reply);
 
+          reply.code(201);
           reply.send({
             message: "Player registered",
             playerId: player.id,
           });
         } catch (e) {
 
-          // TODO throw unique error if player already exists
-          // if (e?.)
-
+          // Throw unique error if player already exists
+          if (e.driverError.code === "23505") {
+            const { username } = request.body;
+            reply.code(409);
+            reply.send({
+              message: `Player with username ${username} already exists`,
+              error: e,
+            })
+          } else {
+            reply.code(500);
+            reply.send({
+              message: "Database error",
+              error: e,
+            });
+          }
           console.error(e);
-          reply.code(500);
-          reply.send({
-            status: "Database error",
-            error: e,
-          });
         }
       }
     );

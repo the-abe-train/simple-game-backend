@@ -24,7 +24,7 @@ const schema: FastifySchema = {
 export const authorizeRouter: FastifyPluginAsync<{ prefix: string }> =
   async function router(server: FastifyInstance) {
     server.post<{ Body: IBody }>(
-      "/authorize",
+      "/authorization",
       { schema },
       async (request, reply) => {
         try {
