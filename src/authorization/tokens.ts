@@ -7,7 +7,10 @@ type Tokens = {
   accessToken: string;
 };
 
-const createTokens = (sessionToken: string, playerId: string): Tokens => {
+export const createTokens = (
+  sessionToken: string,
+  playerId: string
+): Tokens => {
   if (!jwtSignature) throw "No jwt signature in environment variables";
 
   // Create refresh token (Session id)
