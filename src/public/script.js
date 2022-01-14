@@ -8,7 +8,7 @@ registerForm.addEventListener("submit", async (e) => {
       }
       return obj;
     }, {});
-    const res = await fetch("/api/register", {
+    await fetch("/api/player", {
       method: "POST",
       body: JSON.stringify(values),
       headers: { "Content-type": "application/json; charset=UTF-8" },
@@ -28,7 +28,7 @@ loginForm.addEventListener("submit", async (e) => {
       }
       return obj;
     }, {});
-    const res = await fetch("/api/authorize", {
+    await fetch("/api/authorization", {
       method: "POST",
       body: JSON.stringify(values),
       headers: { "Content-type": "application/json; charset=UTF-8" },
@@ -43,9 +43,31 @@ const logoutBtn = document.getElementById("logout-btn");
 logoutBtn.addEventListener("click", async () => {
   try {
     console.log('logout button pressed')
-    await fetch("/api/logout", {
-      method: "POST",
+    await fetch("/api/authorization", {
+      method: "DELETE",
     });
+  } catch (e) {
+    console.error(e);
+  }
+})
+
+const deleteAcctBtn = document.getElementById("delete-acct-btn");
+deleteAcctBtn.addEventListener("click", async () => {
+  try {
+    console.log('logout button pressed')
+    await fetch("/api/player", {
+      method: "DELETE",
+    });
+  } catch (e) {
+    console.error(e);
+  }
+})
+
+const getPlayerBtn = document.getElementById("get-player-btn");
+getPlayerBtn.addEventListener("click", async () => {
+  try {
+    console.log('logout button pressed')
+    await fetch("/api/player");
   } catch (e) {
     console.error(e);
   }
@@ -57,9 +79,9 @@ scoreForm.addEventListener("submit", async (e) => {
   const score = new FormData(scoreForm).get('score');
   try {
     console.log(score);
-    await fetch("/api/score/update", {
+    await fetch("/api/player/score", {
       method: "PUT",
-      body: JSON.stringify({score}),
+      body: JSON.stringify({ score }),
       headers: { "Content-type": "application/json; charset=UTF-8" },
     });
   } catch (e) {

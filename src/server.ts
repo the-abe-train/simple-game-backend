@@ -4,10 +4,11 @@ import fastifyStatic from "fastify-static";
 import path from "path";
 
 import { cookieSignature, port } from "./env";
+import { deleteAccountRouter } from "./routes/deleteAccount";
 import { authorizeRouter } from "./routes/logIn";
 import { logOutRouter } from "./routes/logOut";
+import { playerDataRouter } from "./routes/playerData";
 import { registerRouter } from "./routes/register";
-import { testRouter } from "./routes/testRoute";
 import { scoreUpdateRouter } from "./routes/updateScore";
 
 // Declare server
@@ -31,7 +32,8 @@ export const startServer = async (): Promise<FastifyInstance> => {
   server.register(authorizeRouter, { prefix: "/api" });
   server.register(logOutRouter, { prefix: "/api" });
   server.register(scoreUpdateRouter, { prefix: "/api" });
-  server.register(testRouter);
+  server.register(deleteAccountRouter, { prefix: "/api" });
+  server.register(playerDataRouter, { prefix: "/api" });
 
   // Start server
   await server.listen(port);
